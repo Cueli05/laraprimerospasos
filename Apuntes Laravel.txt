@@ -1,0 +1,13 @@
+PHP Artisan: Muestra todos los comandos disponibles
+
+PHP artisan route:list - Lista todos los comandos que se pueden utilizar
+
+composer install: Instala todas las dependencias del composer (o carpeta vendor en laravel, esta carpeta no se sube a git y por eso es necesario realizar esa operacion)
+
+Route:: GET -> Se utiliza para PRESENTAR algun recurso
+	Post -> Se utiliza para CREAR algun recurso
+	Put - Patch -> se utiliza para ACTUALIZAR algun recurso
+	Delete -> Se utiliza para ELIMINAR algun recurso
+	
+Es recomendable utilizar rutas con nombre, de esta forma podemos cambiar el link de la ruta sin problema, para esto debemos utilizar la funcion route dentro del html (Ejemplo: {{route('contacto')}})
+

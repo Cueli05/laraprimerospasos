@@ -18,6 +18,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/contacto', function () {
+
+    return "Contactame";
+})->name('contacto');
+
 Route::get('custom', function () {
     $mensj = "Mensaje desde el servidor *-*";
 
