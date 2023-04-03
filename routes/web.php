@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+/*
 Route::get('/', function () {
 
     return view('welcome');
 });
-
+*/
 Route::get('/contacto', function () {
 
     return "Contactame";
@@ -33,5 +33,5 @@ Route::get('custom', function () {
     return view('custom',$data);
 });
 
-Route::get('test', [TestController::class,'test']);
+Route::get('/', [TestController::class,'test']);
 
