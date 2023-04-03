@@ -11,5 +11,9 @@
     <a href="/contacto">Contacto</a>
     <br>
     <a href="{{route('contacto')}}">Contacto (Ruta con Nombre)</a>
+    <br>
+
+    {{$user}}
+
 </body>
 </html>

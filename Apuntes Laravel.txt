@@ -11,3 +11,8 @@ Route:: GET -> Se utiliza para PRESENTAR algun recurso
 	
 Es recomendable utilizar rutas con nombre, de esta forma podemos cambiar el link de la ruta sin problema, para esto debemos utilizar la funcion route dentro del html (Ejemplo: {{route('contacto')}})
 
+php artisan migrate: Lo utilizamos para crear las tablas en la base de datos que estan en la carpeta database-> migrations
+
+php artisan make:controller NombreControlador -r: esto se crea en la ruta app->Http-> Controllers. Al final se le coloca -r para que cree de una vez los recursos tipo crud (Crear, Eliminar, Editar, Listar, etc)
+
+php artisan make:model NombreModel : Permite crear el modelo que representa la tabla en la base de datos
