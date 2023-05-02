@@ -16,3 +16,15 @@ php artisan migrate: Lo utilizamos para crear las tablas en la base de datos que
 php artisan make:controller NombreControlador -r: esto se crea en la ruta app->Http-> Controllers. Al final se le coloca -r para que cree de una vez los recursos tipo crud (Crear, Eliminar, Editar, Listar, etc)
 
 php artisan make:model NombreModel : Permite crear el modelo que representa la tabla en la base de datos
+
+con shit+alt+flecha abajo me copia lo que tenga escrito en esa linea, y lo pega en la de abajo, con flecha arriba lo copia para arriba
+
+Con la funcion compact podemos compactar lo que retornamos en las vistas de los controladores, por ejemplo, en vez de decir 'post' => $post ('variable que recive la vista' => $valor que envia) podemos utilizar compact('post') y de esta forma ya laravel entiende que tanto la variable que envia a la vista como la que tiene los valores se van a llamar igual.
+
+Par crear una tabla, se debe de crear un archivo de migracion que se encuentra en database -> migration. Para crear la migracion se usa php artisan make:migration nombretabla. Si queremos que laravel nos cree una migracion con lo minimo para crear una tabla podemos poner el nombre de create_nombretabla_table
+
+Para eliminar las migraciones podemos usar el comando rollback (php artisan migrate:rollback) y si usamos el comando step podemos indicarle cuantas tablas queremos eliminar yendo de la ultima a la primera php artisan migrate:rollback --step 2
+
+Si es necesario agregar una columna a una tabla existente y ya no es posible hacerlo en la migracion original se puede usar en el nombre la palabra drop para que nos cree la estructura para agregar la columna. Ejemplo: php artisan make:migration add_description_to_posts_table
+
+Cuando creamos un controlador, se puede indicar al final un -r para que cree el controlador completo para un crud y un -m para que cree el modelo asociado al controlador. Ejemplo: php artisan PostController -r -m
