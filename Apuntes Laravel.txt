@@ -28,3 +28,116 @@ Para eliminar las migraciones podemos usar el comando rollback (php artisan migr
 Si es necesario agregar una columna a una tabla existente y ya no es posible hacerlo en la migracion original se puede usar en el nombre la palabra drop para que nos cree la estructura para agregar la columna. Ejemplo: php artisan make:migration add_description_to_posts_table
 
 Cuando creamos un controlador, se puede indicar al final un -r para que cree el controlador completo para un crud y un -m para que cree el modelo asociado al controlador. Ejemplo: php artisan PostController -r -m
+
+----------------------------------------------------------------------------------------------------
+/*para saber si se debe de colocar get, post, delete, etc o para saber como referenciar 
+el parametro de post o post/{post}
+y para saber cuando poner el ultimo parametro, indez, show
+revisamos lo que nos devuelve php artisan route:list para saber que colocar en cada lugar
+DE TODAS FORMAS NADA DE ESTO ES NECESARIO SI SE CREA UNA RUTA DE TIPO RESOURCE*/
+
+Route::get('post', [PostController::class,'index']);
+Route::get('post/{post}', [PostController::class,'show']);
+Route::get('post/create', [PostController::class,'create']);
+Route::get('post/{post}/edit', [PostController::class,'edit']);
+
+Route::post('post', [PostController::class,'store']);
+Route::put('post/{post}', [PostController::class,'update']);
+Route::delete('post/{post}', [PostController::class,'delete']);
+------------------------------------------------------------------------------------------------------
+
+Para ver la informacion qeu se envia en un formulario se puede usar dd.... con esta funcion podemos ver mucha informacion, pero si colocamos request('nombre campo') podemos ver especificamente el valor de dicho campo... si se quiere usar el dd habria que hacerlo de la siguiente forma dd($request) -> input(nombre campo) ($request es el parametro con todos los valores recibidos en la funcion)... pero si queremos ver todos los campos se hace de la siguiente forma
+
+dd($request -> all());
+
+fue la que mejor me parecio
+
+Cuando se quiere realiazr una busqueda en la base de datos, escribir Category::get(); equivale a select * from Category ..... a Category::get(); se le puede colocar un where igual que a la consulta de SQL
+
+Como alternartiva al get() podemos usar la funciona pluck para cuando solo se envian dos campos (ejemplo, id y descripcion)....$categories = Category::pluck('id','title');
+
+Laravel tiene sus propias validaciones que se pueden utilizar. Se pueden encontrar como validation Rules en la documentacion
+
+Con php artisan make:request se pueden crear validaciones personalizadas y reutilizables.
+
+Cuando se crea una validacion personalizada con make:request la funcion authorize hay que cambiarla a true para que tome en cuenta las validaciones que estamos creando...si la dejamos en false entonces no tomara en cuenta las validaciones creadas en dicho request.
+
+para saber si hay algun error de validacion podemos crear el request una funcion estatica con las reglas. Ejemplo:
+    static public function myRules(){
+        return [
+            "title" => "required|min:5|max:500",
+            "slug" => "required|min:5|max:500",
+            "content" => "required|min:7",
+            "category_id" => "required|integer",
+            "description" => "required|min:7",
+            "posted" => "required|min:2"
+        ];
+
+luego podemos crear una variable que valide los datos. Ej:
+$validated = Validator::make($request->all(),StoreRequest::myRules());
+y con dd($validated->fails()); podemos saber si fallo (true) o no (false)
+con dd($validated->errors());podemos ver cual fue el error
+
+
+Para comentar: ctrl+K+C
+Para descomentario: ctrl+K+U
+
+Laravel tiene una funcion con la cual podemos preparar algunos valores antes de que los mismos sean validados
+protected function prepareForValidation()
+
+para el poder eliminar o actualizar un registro (opciones que no redireccionan, no confundir con vista para editar) un registro, el mismo no se hace con un enlace como el crear, editar o mostrar. Para eliminar hay que crear un formulario de metodo POST donde el action sea la ruta (route) del destroy, y en el formulario se coloca un boton para eliminar. Luego hay que utilizar @method("DELETE o PUT") indicando si se desea eliminar o actualizar (Esto depende de lo que diga la ruta a la cual se quiere acceder.) No Olvidar colocar el token @csrf para que funcione el formulario. Ej:
+
+<form action="{{route("post.destroy",$p)}}"" method="post">
+      @csrf
+      @method("delete")
+     <button type="submit">Eliminar</button>
+</form>
+
+Con la funcion OLD podemos saber que valor tenia el campo cuando se envia la informacion, pero la pagina se vuelve a cargar debido a que no se cumplio alguna validacion.La funcion OLd recibe dos parametros, el nombre del campo y el valor que tiene por defecto al cargar por primera vez la pagina (este segundo parametro es opcional)
+ EJ:
+
+<input type="text" name="title" id="" value = "{{old("title","")}}">
+
+con la funcion route podemos obtener la ruta de una vista en especifico
+EJ: route("post.create")
+
+con to_route podemos hacer directamente la redireccion
+EJ: to_route("post.create")
+
+para poder trabajra con imagenes se coloca el atributo html en el <form> enctype="multipart/form-data"
+
+Si queremos agregar html en los fragmentos que pueden ser llamados de diferentes vistas con el include, pero en una vista incluye campo y en otros no, podemos enviar parametros que indiquien un valor que se pueda preguntar si existe para saber desde donde se esta llamando.
+
+Ejemplo
+
+edit.blade.php
+@include('dashboard.post._form',["task" => "edit"])
+
+_form.blade.php
+@if ( isset($task) && $task == "edit")
+    <label for="imagen">Imagen</label>
+    <input type="file" name="imagen" id="">
+@endif
+
+
+para guardar imagenes o archivos laravel utiliza discos (disk), la configuracion para indicar donde querermos guardar alguna imagen se encuentra en:
+app/config/filesystems.php
+
+Cuando se sube un archivo, podemos usar la funciona hasname para darle un nombre aleatorio al archivo, Ej ($request->Validated()["image"]->hashName())
+
+Para hacer una relacion entre tablas no es necesario hacer un join, solo hay que ver que tipo de relacion haremos y buscar en la documentacion como funciona. Para el ejemplo de 1 a muchos creamos una funcion publica donde indicamos con belongsTo, EJ:
+
+    public function category(){
+        $this->belongsTo(Category::class);
+    }
+
+Esta funcion acepta un segudo parametro donde se indica el campo id de la tabla relacionada, este campo es opcional si se sigue las convenciones de eloquent en laravel donde las FK se crean agregando el sufijo _id ejemplo user_id
+
+
+Si queremos poner un prefijo a las vistas podemos usar Route::group, de esta forma en vez de entrar en miapp.com/prueba, podemos entrar en miapp.com/prefijo/prueba. EJ:\
+Route::group(['prefix' => 'dashboard'], function () {
+    Route::resource('post', PostController::class);
+    Route::resource('category', CategoryController::class);
+});
+
+En este caso, se coloca el prejifo dashboard a las rutas de post y categoria
