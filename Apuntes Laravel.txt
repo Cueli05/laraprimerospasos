@@ -141,3 +141,12 @@ Route::group(['prefix' => 'dashboard'], function () {
 });
 
 En este caso, se coloca el prejifo dashboard a las rutas de post y categoria
+
+Laravel Breeze es una herramienta que ayuda con la autenticacion en laravel, lo primero que hay que hacer es ejecutar el siguiente comando en el terminal
+composer require laravel/breeze --dev
+
+luego de instalado, par aconfigurarlo escribimos
+php artisan breeze:install
+
+luego nos pregunta si queremos trabajar con blade, react, vue o api (Aqui elegimos el que mas nos convenga)
+
